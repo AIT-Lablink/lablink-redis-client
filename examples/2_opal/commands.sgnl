@@ -1,0 +1,11 @@
+cmd/VoltVAr.ExternalSystem/Vmag,1.0
+cmd/VoltVAr.ExternalSystem/Vang,0.0
+cmd/VoltVAr.ExternalSystem/resistance,1.1111111111111112e-08
+cmd/VoltVAr.ExternalSystem/reactance,1.1111111111111112e-08
+cmd/VoltVAr.Line1/faulty,1.0
+cmd/VoltVAr.Line1/fault_distance_factor,0.0
+cmd/VoltVAr.Line1/resistance,0.0
+cmd/VoltVAr.Line1/reactance,0.0005305165
+cmd/VoltVAr.Line1/capacitance,0.0
+cmd/VoltVAr.DERGenerator/P,-0.2
+cmd/VoltVAr.DERGenerator/Q,0.0
