@@ -71,7 +71,9 @@ pygments_style = None
 
 # -- Options for HTML output -------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
+# The name of an image file (relative to this directory) to place at the top of the sidebar.
+html_logo = 'img/lablink_logo_rtd.svg'
+
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
