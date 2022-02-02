@@ -3,7 +3,7 @@
 // Distributed under the terms of the Modified BSD License.
 //
 
-package at.ac.ait.lablink.clients.lablinkredisclient;
+package at.ac.ait.lablink.clients.redisclient;
 
 import static org.junit.Assert.assertEquals;
 

@@ -3,7 +3,9 @@
 // Distributed under the terms of the Modified BSD License.
 //
 
-package at.ac.ait.lablink.clients.lablinkredisclient;
+package at.ac.ait.lablink.clients.redisclient;
+
+import at.ac.ait.lablink.clients.redisclient.RedisOpalConfig;
 
 import at.ac.ait.lablink.core.client.ci.mqtt.impl.MqttCommInterfaceUtility;
 import at.ac.ait.lablink.core.client.ex.ClientNotReadyException;
@@ -20,22 +22,22 @@ import at.ac.ait.lablink.core.service.IServiceStateChangeNotifier;
 import at.ac.ait.lablink.core.service.LlService;
 import at.ac.ait.lablink.core.service.LlServiceDouble;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import at.ac.ait.lablink.clients.lablinkredisclient.RedisOpalConfig;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.configuration.ConfigurationException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 
 
 
@@ -44,10 +46,10 @@ import org.apache.commons.cli.Options;
  */
 public class RedisOpalClient {
 
-  private static final String DEFAULT_JSON_CONFIG_FILE = "opalconfig.json";  
-    
+  private static final String DEFAULT_JSON_CONFIG_FILE = "opalconfig.json";
+
   private static final String USAGE = "[-c <url> | -h ]";
-  
+
   private static final String HEADER = "Redis Client for the ROADB (Opal data layer) -  v0.0.1";
 
   /** The Constant FOOTER. */
@@ -75,19 +77,23 @@ public class RedisOpalClient {
    * @throws ServiceIsNotRegisteredWithClientException service is not registered with client
    * @throws ServiceTypeDoesNotMatchClientType service type does not match client type
    * @throws ConfigurationException bad configuration
+   * @throws ParseException parse exception
+   * @throws FileNotFoundException file not found exception
+   * @throws IOException IO exception
    */
-  public static void main( String[] args )
-      throws ClientNotReadyException, CommInterfaceNotSupportedException,
+  public static void main( String[] args ) throws
+      ClientNotReadyException, CommInterfaceNotSupportedException,
       DataTypeNotSupportedException, NoServicesInClientLogicException,
       NoSuchCommInterfaceException, ServiceIsNotRegisteredWithClientException,
-      ServiceTypeDoesNotMatchClientType, ConfigurationException, ParseException, FileNotFoundException, IOException  {    
+      ServiceTypeDoesNotMatchClientType, ConfigurationException,
+      ParseException, FileNotFoundException, IOException  {
 
     Options cliOptions = new Options();
     CommandLineParser parser = new BasicParser();
-    
-    cliOptions.addOption("h", "help", false, "print usage information");    
+
+    cliOptions.addOption("h", "help", false, "print usage information");
     cliOptions.addOption("c", "config file", true,
-      "URL to configuration file (" + DEFAULT_JSON_CONFIG_FILE + ")");
+        "URL to configuration file (" + DEFAULT_JSON_CONFIG_FILE + ")");
 
     CommandLine commandLine = parser.parse(cliOptions, args);
     String configFile = DEFAULT_JSON_CONFIG_FILE;
@@ -96,40 +102,36 @@ public class RedisOpalClient {
     if (commandLine.hasOption("c")) {
       configFile = commandLine.getOptionValue("c");
     }
-  
+
     if (commandLine.hasOption("h")) {
       printUsage(cliOptions);
       System.exit(0);
     }
 
     RedisOpalConfig config = new RedisOpalConfig(configFile);
-    String clientDesc = HEADER;    
+    String clientDesc = HEADER;
     // Client description.
-    
-   RedisClient redisClient = new RedisClient(
-     config.redisIP, config.redisPort, 
-     config.scenarioName, config.groupName, config.clientName, clientDesc,
-     config.labLinkPropertiesUrl, config.syncHostPropertiesUrl
-   );
 
-  String signal;
-  BufferedReader csvReader = new BufferedReader(new FileReader(config.measFile));
-  while ((signal = csvReader.readLine()) != null) {
-    redisClient.addRedisKeyAsSensor(signal, 5000);    
+    RedisClient redisClient = new RedisClient(
+        config.redisIpAddress, config.redisPort,
+        config.scenarioName, config.groupName, config.clientName, clientDesc,
+        config.labLinkPropertiesUrl, config.syncHostPropertiesUrl
+    );
+
+    String signal;
+    BufferedReader csvReader = new BufferedReader(new FileReader(config.measFile));
+    while ((signal = csvReader.readLine()) != null) {
+      redisClient.addRedisKeyAsSensor(signal, 5000);
+    }
+    csvReader.close();
+    String row;
+    csvReader = new BufferedReader(new FileReader(config.cmdsFile));
+    while ((row = csvReader.readLine()) != null) {
+      String[] data = row.split(",");
+      signal = data[0];
+      redisClient.addRedisKeyAsActuator(signal);
+    }
+    csvReader.close();
+    redisClient.start();
   }
-  csvReader.close();
-  String row;
-  csvReader = new BufferedReader(new FileReader(config.cmdsFile));
-  while ((row = csvReader.readLine()) != null) {
-    String[] data = row.split(",");
-    signal = data[0];
-    redisClient.addRedisKeyAsActuator(signal);    
-  }
-  csvReader.close();      
-  redisClient.start();                  
-  }
-
-
-
-  
 }
