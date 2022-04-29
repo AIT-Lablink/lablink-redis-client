@@ -222,7 +222,7 @@ public class RedisClient {
     for (int i = 0; i < this.sensorList.size(); i++) {
       Timer timer = new Timer();
       timer.schedule(new RedisReader(this.client, sensorList.get(i).name), 
-          0, sensorList.get(i).timeInterval);
+          5000, sensorList.get(i).timeInterval);
     }
 
     // Start the client.
