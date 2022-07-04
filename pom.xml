@@ -4,7 +4,7 @@
 
   <groupId>at.ac.ait.lablink.clients</groupId>
   <artifactId>redisclient</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>Lablink Redis Client</name>
   <description>This package provides Lablink clients that connect to Redis database instances. </description>
   <url>https://github.com/ait-lablink/lablink-redis-client</url>
