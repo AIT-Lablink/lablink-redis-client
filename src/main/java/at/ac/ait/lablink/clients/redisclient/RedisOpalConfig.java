@@ -29,6 +29,9 @@ import java.util.Scanner;
 
 public class RedisOpalConfig {
 
+  protected static final int MS_TIME_INTERVAL_DEFAULT = 5000;
+
+
   // public String cmdsFile;
   // public String measFile;
   public ArrayList<String> commands;
@@ -41,6 +44,8 @@ public class RedisOpalConfig {
 
   public String redisIpAddress;
   public int redisPort;
+
+  public int msTimeInterval;
 
   /**
    * Constructor.
@@ -101,6 +106,12 @@ public class RedisOpalConfig {
     this.labLinkPropertiesUrl = (String) config.get("labLinkPropertiesUrl");
     this.redisIpAddress = (String) config.get("redisIP");
     this.redisPort = Integer.parseInt((String) config.get("redisPort"));
+
+    if (config.containsKey("msTimeInterval")) {
+      this.msTimeInterval = (int) config.get("msTimeInterval");
+    } else {
+      this.msTimeInterval = MS_TIME_INTERVAL_DEFAULT;
+    }
   }
 
   private ArrayList<String> readFile(String fileName) {
@@ -109,11 +120,11 @@ public class RedisOpalConfig {
     try {
       String line;
       BufferedReader fileReader = new BufferedReader(new FileReader(fileName));
-  
+
       while ((line = fileReader.readLine()) != null) {
         list.add(line);
       }
-  
+
       fileReader.close();
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -121,7 +132,7 @@ public class RedisOpalConfig {
           String.format("Invalid configuration input file: %1$s", fileName)
         );
     }
-    
+
     return list;
   }
 

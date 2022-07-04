@@ -115,7 +115,7 @@ public class RedisOpalClient {
     // Retrieve list of measurements and add as client sensors.
     listIter = config.measurements.iterator();
     while (listIter.hasNext()) {
-      redisClient.addRedisKeyAsSensor((String) listIter.next(), 5000);
+      redisClient.addRedisKeyAsSensor((String) listIter.next(), config.msTimeInterval);
     }
 
     // Retrieve list of measurements and add as client actuators.
