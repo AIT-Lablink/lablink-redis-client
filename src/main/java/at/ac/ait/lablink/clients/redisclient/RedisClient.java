@@ -152,8 +152,9 @@ public class RedisClient {
     sensorService.setName( sensorName );
 
     // Specify data service properties.
+    String sensorDatapointName = sensorName;
     MqttCommInterfaceUtility.addDataPointProperties( sensorService,
-        sensorName, sensorDesc, sensorName, sensorUnit );
+        sensorDatapointName, sensorDesc, sensorDatapointName, sensorUnit );
 
     // Add notifier.
     sensorService.addStateChangeNotifier( new RedisClientNotifier() );
@@ -182,8 +183,9 @@ public class RedisClient {
     RedisActuator actuatorService = new RedisActuator();
     actuatorService.setName( actuatorName );
 
+    String actuatorDatapointName = actuatorName;
     MqttCommInterfaceUtility.addDataPointProperties( actuatorService,
-        actuatorName, actuatorDesc, actuatorName, actuatorUnit );
+        actuatorDatapointName, actuatorDesc, actuatorDatapointName, actuatorUnit );
 
     // Add notifier.
     actuatorService.addStateChangeNotifier( new RedisClientNotifier() );
@@ -237,6 +239,7 @@ public class RedisClient {
     private IImplementedService<Double> service;
     private String sensorName;
 
+    @SuppressWarnings( "unchecked" )
     public RedisReader(LlClient client, String sensorName) {
       this.client = client;
       this.sensorName = sensorName;

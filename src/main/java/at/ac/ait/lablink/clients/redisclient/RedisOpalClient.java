@@ -33,13 +33,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
-
-
+import java.util.Iterator;
 
 /**
  * Class RedisClient.
@@ -78,15 +72,13 @@ public class RedisOpalClient {
    * @throws ServiceTypeDoesNotMatchClientType service type does not match client type
    * @throws ConfigurationException bad configuration
    * @throws ParseException parse exception
-   * @throws FileNotFoundException file not found exception
-   * @throws IOException IO exception
    */
   public static void main( String[] args ) throws
       ClientNotReadyException, CommInterfaceNotSupportedException,
       DataTypeNotSupportedException, NoServicesInClientLogicException,
       NoSuchCommInterfaceException, ServiceIsNotRegisteredWithClientException,
       ServiceTypeDoesNotMatchClientType, ConfigurationException,
-      ParseException, FileNotFoundException, IOException  {
+      ParseException {
 
     Options cliOptions = new Options();
     CommandLineParser parser = new BasicParser();
@@ -110,28 +102,30 @@ public class RedisOpalClient {
 
     RedisOpalConfig config = new RedisOpalConfig(configFile);
     String clientDesc = HEADER;
-    // Client description.
 
+    // Client description.
     RedisClient redisClient = new RedisClient(
         config.redisIpAddress, config.redisPort,
         config.scenarioName, config.groupName, config.clientName, clientDesc,
         config.labLinkPropertiesUrl, config.syncHostPropertiesUrl
     );
 
-    String signal;
-    BufferedReader csvReader = new BufferedReader(new FileReader(config.measFile));
-    while ((signal = csvReader.readLine()) != null) {
-      redisClient.addRedisKeyAsSensor(signal, 5000);
+    Iterator listIter;
+
+    // Retrieve list of measurements and add as client sensors.
+    listIter = config.measurements.iterator();
+    while (listIter.hasNext()) {
+      redisClient.addRedisKeyAsSensor((String) listIter.next(), 5000);
     }
-    csvReader.close();
-    String row;
-    csvReader = new BufferedReader(new FileReader(config.cmdsFile));
-    while ((row = csvReader.readLine()) != null) {
-      String[] data = row.split(",");
-      signal = data[0];
-      redisClient.addRedisKeyAsActuator(signal);
+
+    // Retrieve list of measurements and add as client actuators.
+    listIter = config.commands.iterator();
+    while (listIter.hasNext()) {
+      String[] data = ((String) listIter.next()).split(",");
+      redisClient.addRedisKeyAsActuator(data[0]);
     }
-    csvReader.close();
+
+    // Start the Redis client.
     redisClient.start();
   }
 }
