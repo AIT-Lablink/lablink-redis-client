@@ -19,12 +19,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'lablink-redis-client'
+project = 'AIT Lablink Redis Client'
 copyright = 'AIT Austrian Institute of Technology GmbH'
 author = 'AIT Lablink Development Team'
 
 # The short X.Y version
-version = '0.0.1'
+version = '0.0.2'
 # The full version, including alpha/beta/rc tags
 release = ''
 
@@ -39,6 +39,7 @@ release = ''
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.extlinks',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -103,7 +104,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'lablink-redis-client'
+htmlhelp_basename = 'AITLablinkRedisClient'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -130,7 +131,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'lablink-redis-client.tex', 'lablink-redis-client',
+    (master_doc, 'AITLablinkRedisClient.tex', 'AIT Lablink Redis Client',
      'AIT Lablink Development Team', 'manual'),
 ]
 
@@ -140,7 +141,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'lablinkredisclient', 'lablink-redis-client',
+    (master_doc, 'aitlablinkredisclient', 'AIT Lablink Redis Client',
      [author], 1)
 ]
 
@@ -151,8 +152,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'lablink-redis-client', 'lablink-redis-client',
-     author, 'lablink-redis-client', 'One line description of project.',
+    (master_doc, 'AITLablinkRedisClient', 'AIT Lablink Redis Client',
+     author, 'AITLablinkRedisClient', 'AIT Lablink Redis Client.',
      'Miscellaneous'),
 ]
 

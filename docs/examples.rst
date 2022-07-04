@@ -1,0 +1,1 @@
+Examples are available on the Githib repository in sub-directory :github_tree:`examples`.
