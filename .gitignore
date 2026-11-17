@@ -1,3 +1,7 @@
 target/
 .mvn/wrapper/maven-wrapper.jar
 docs/_build
+
+# Helper files.
+build.cmd
+docker/build.cmd
