@@ -30,6 +30,9 @@ Commands / Measurements Configuration
 =====================================
 
 For interacting with the Redis database, the client defines **measurements** (i.e., data values to be read from the database) and **commands** (i.e., data values to be written to the database).
+A measurement is a Redis stream.
+On each read the client takes the newest entry and uses the numeric field ``value``.
+A command is a Redis string key.
 Both can be either defined in a local configuration file (with Redis keys in separate lines) or as JSON arrays.
 
 .. topic:: Configuration via local file:

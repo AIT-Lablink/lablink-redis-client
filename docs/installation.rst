@@ -1,5 +1,8 @@
+Installation
+============
+
 Maven project dependency
-========================
+------------------------
 
 The Lablink Redis client's compiled Java package is available on the |MCR|_.
 Use it in your local Maven_ setup by including the following dependency into your *pom.xml*:
@@ -15,7 +18,7 @@ Use it in your local Maven_ setup by including the following dependency into you
 .. note:: You may have to adapt this snippet to use the latest version, please check the |MCR|_.
 
 Installation from source
-========================
+------------------------
 
 Installation from source requires a local **Java Development Kit** installation, for instance the `Oracle Java SE Development Kit 13 <https://www.oracle.com/technetwork/java/javase/downloads/index.html>`_ or the `OpenJDK <https://openjdk.java.net/>`_.
 
@@ -28,6 +31,21 @@ Check out the project and compile it with Maven_:
    mvnw clean package
 
 This will create JAR file *redisclient-<VERSION>-jar-with-dependencies.jar* in subdirectory *target/assembly*.
+
+Docker image
+------------
+
+A ready-to-run image is published on `Docker Hub <https://hub.docker.com/r/ait1/lablink-redis-client>`_ as ``ait1/lablink-redis-client:latest``:
+
+.. code-block:: winbatch
+
+   docker pull ait1/lablink-redis-client:latest
+
+The image starts the class named by ``REDIS_CLASS``.
+The default class is ``at.ac.ait.lablink.clients.redisclient.RedisOpalClient``.
+The client opens a shell, so the container needs an interactive terminal.
+See :doc:`here <running>` for how to start the container.
+Building the image locally with :github_blob:`docker/build.cmd <docker/build.cmd>` tags the result with the same name.
 
 .. |MCR| replace:: Maven Central Repository
 .. _MCR: https://search.maven.org/artifact/at.ac.ait.lablink.clients/redisclient

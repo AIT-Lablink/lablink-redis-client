@@ -50,3 +50,15 @@ Find the reference for writing a configuration for a Lablink Redis client :doc:`
    :caption: Configuration
 
    /configuration
+
+Examples
+========
+
+Find step-by-step instructions for running the examples :doc:`here <examples>`.
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Examples
+
+   /examples
