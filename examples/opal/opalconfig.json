@@ -1,0 +1,11 @@
+{
+  "cmdsFile" : "commands.sgnl",
+  "measFile" : "measurements.sgnl",
+  "groupName" : "RedisOpalDemo",
+  "clientName" : "RedisOpalClient",
+  "scenarioName" : "RedisOpalScenario",
+  "syncHostPropertiesUrl" : "http://lablink-config:10101/get?id=ait.example.all.sync-host.properties",
+  "labLinkPropertiesUrl" : "http://lablink-config:10101/get?id=ait.example.all.llproperties",
+  "redisIP" : "redis",
+  "redisPort" : "6379"
+}

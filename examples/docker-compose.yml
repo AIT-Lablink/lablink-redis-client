@@ -1,0 +1,132 @@
+services:
+  mqtt:
+    image: eclipse-mosquitto:2
+    networks:
+      - example
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    # A Windows bind mount is world-writable, which Mosquitto 2 refuses to load.
+    # The copy script has to be a single argument. A plain string is split, and sh -c then runs cp with no arguments.
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - "cp /mosquitto/config/mosquitto.conf /tmp/mosquitto.conf && chmod 600 /tmp/mosquitto.conf && exec /usr/sbin/mosquitto -c /tmp/mosquitto.conf"
+    healthcheck:
+      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "healthcheck", "-m", "ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  lablink-config:
+    image: ait1/lablink-config-server:latest
+    networks:
+      - example
+    volumes:
+      - ./config/example-lablink-config.db:/app/config.db
+    ports:
+      - "10101:10101"
+
+  # RedisClientBasic is compiled to connect to 10.111.202.11. Give this service that address.
+  redis:
+    image: redis:7
+    networks:
+      example:
+        ipv4_address: 10.111.202.11
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  # String values for the example keys. Measurements are read by the client;
+  # commands are overwritten when the shell sets them.
+  redis-seed:
+    image: redis:7
+    networks:
+      - example
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: "no"
+    volumes:
+      - ./opal/commands.sgnl:/seed/commands.sgnl:ro
+      - ./opal/measurements.sgnl:/seed/measurements.sgnl:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+        redis-cli -h redis SET test/1 0
+        redis-cli -h redis SET test/2 0
+        tr -d '\r' < /seed/commands.sgnl | while IFS= read -r line; do
+          [ -n "$$line" ] || continue
+          key=$${line%%,*}
+          val=$${line#*,}
+          redis-cli -h redis SET "$$key" "$$val"
+        done
+        tr -d '\r' < /seed/measurements.sgnl | while IFS= read -r line; do
+          [ -n "$$line" ] || continue
+          redis-cli -h redis SET "$$line" 0
+        done
+
+  redisinsight:
+    image: redis/redisinsight:3.8
+    networks:
+      - example
+    ports:
+      - "5540:5540"
+    environment:
+      RI_REDIS_HOST: redis
+      RI_REDIS_PORT: "6379"
+      RI_REDIS_ALIAS: lablink
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  basic:
+    image: ait1/lablink-redis-client:latest
+    profiles: ["shell"]
+    stdin_open: true
+    tty: true
+    networks:
+      - example
+    environment:
+      LLCONFIG: http://lablink-config:10101/get?id=
+      REDIS_CLASS: at.ac.ait.lablink.clients.redisclient.RedisClientBasic
+      LOGGER_ID: ait.example.all.log4j2
+    depends_on:
+      mqtt:
+        condition: service_healthy
+      lablink-config:
+        condition: service_started
+      redis-seed:
+        condition: service_completed_successfully
+
+  opal:
+    image: ait1/lablink-redis-client:latest
+    profiles: ["shell"]
+    stdin_open: true
+    tty: true
+    networks:
+      - example
+    environment:
+      LLCONFIG: http://lablink-config:10101/get?id=
+      REDIS_CONFIG: ait.example.redis.opal.config
+      REDIS_CLASS: at.ac.ait.lablink.clients.redisclient.RedisOpalClient
+      LOGGER_ID: ait.example.all.log4j2
+    volumes:
+      - ./opal/commands.sgnl:/app/commands.sgnl:ro
+      - ./opal/measurements.sgnl:/app/measurements.sgnl:ro
+    depends_on:
+      mqtt:
+        condition: service_healthy
+      lablink-config:
+        condition: service_started
+      redis-seed:
+        condition: service_completed_successfully
+
+networks:
+  example:
+    ipam:
+      config:
+        - subnet: 10.111.202.0/24
