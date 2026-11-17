@@ -10,10 +10,9 @@ These images are published on Docker Hub and are pulled automatically:
 * ``redis:7``
 * ``redis/redisinsight:3.8``
 
-Both examples use the Compose file at :github_blob:`examples/docker-compose.yml <examples/docker-compose.yml>`.
-They share :github_blob:`example-lablink-config.db <examples/config/example-lablink-config.db>` and :github_blob:`mosquitto.conf <examples/config/mosquitto.conf>`.
+The example setup is configured via the Compose file at :github_blob:`examples/docker-compose.yml <examples/docker-compose.yml>`.
+The example setup shares the configuration database file :github_blob:`example-lablink-config.db <examples/config/example-lablink-config.db>` and the MQTT broker configuration file :github_blob:`mosquitto.conf <examples/config/mosquitto.conf>`.
 Inside the containers the broker host is ``mqtt``, the configuration server host is ``lablink-config``, and the Redis host name is ``redis``.
-
 ``RedisClientBasic`` connects to ``10.111.202.11``.
 The Compose file assigns that address to the Redis service.
 
@@ -23,21 +22,14 @@ Using a local clone of the repository, change to folder `examples` and start the
 
    docker compose up -d
 
-Redis Insight is at http://localhost:5540.
-Open the preconfigured database ``lablink``.
-It shows the Redis strings the clients use.
-A value written by a client shell appears there.
-A value you edit there is read by the client on its next poll, which runs every 5 seconds.
+Redis Insight can be used to view the Redis strings the clients use, it is accessible at http://localhost:5540:
 
-.. note:: Once the stack is running, the available configurations are listed at http://localhost:10101.
-
-.. seealso:: A convenient tool for viewing the content of the configuration database file (and editing it for experimenting with the examples) is `DB Browser for SQLite <https://sqlitebrowser.org/>`_.
+* Open the preconfigured database ``lablink`` in Redis Insight.
+* A value written by a client shell appears there.
+* A value you edit there is read by the client on its next poll, which runs every 5 seconds.
 
 Start a client shell from the same directory.
 The two shells can run one at a time or together.
-``--no-tty=false`` attaches a terminal.
-Without one, the client shell stops at once.
-
 
 Example 1: Reading and writing Redis keys
 =========================================
