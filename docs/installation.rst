@@ -32,6 +32,11 @@ Check out the project and compile it with Maven_:
 
 This will create JAR file *redisclient-<VERSION>-jar-with-dependencies.jar* in subdirectory *target/assembly*.
 
+Publishing to the Maven Central Repository
+------------------------------------------
+
+A release is published with ``mvnw deploy``. The build signs the artifacts and uploads them to the `Central Portal <https://central.sonatype.com/>`_. The upload uses a Central Portal user token from your Maven ``settings.xml`` and a local GPG key. Publishing is manual: the deployment stays pending until you publish it in the portal, and the build waits until that happens.
+
 Docker image
 ------------
 
